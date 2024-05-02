@@ -33,6 +33,7 @@ struct Pieza{
 	int fila;
 	char columna;
 	bool M;
+	bool movida;
 };
 
 typedef struct Pieza Pieza;
@@ -40,9 +41,12 @@ typedef struct Pieza Pieza;
 int main(int argc, char *argv) {
 
 	int i,j,k;
-	char *move;
-	int fil, col;
-	bool jaque, jaquematecontomate;
+	char *move = malloc(sizeof(char)*4);
+	char buffer[100];
+	char* aux;
+	int fil,col;
+	int len;
+	bool jaque = false, jaquematecontomate = false;
 	int encontrado = 0;
 	Pieza blancas[16];
 	Pieza negras[16];
@@ -131,6 +135,8 @@ int main(int argc, char *argv) {
 		negras[i+8].fila = 7;
 		blancas[i+8].M = false;
 		negras[i+8].M = false;
+		blancas[i+8].movida = false;
+		negras[i+8].movida = false;
 	}
 
 	puts("----------------------------------------");
@@ -140,35 +146,81 @@ int main(int argc, char *argv) {
 
 
 	puts("Juegan BLANCAS");
+	while(1){
 
-	for (i = 8 ; i >= 1; i--){
-		puts("\t  -----------------");
-		printf(" \t%d |", i);
-		for(j = 1 ; j <= 8 ; j++){
-			for(k = 0; k < 16; k++){
-				if (blancas[k].columna == j && blancas[k].fila == i){
-					encontrado = 1;
-					printf("%s|", blancas[k].codigo);
-					break;
+		for (i = 8 ; i >= 1; i--){
+			puts("\t  -----------------");
+			printf(" \t%d |", i);
+			for(j = 1 ; j <= 8 ; j++){
+				for(k = 0; k < 16; k++){
+					if (blancas[k].columna == j && blancas[k].fila == i){
+						encontrado = 1;
+						printf("%s|", blancas[k].codigo);
+						break;
+					}
+					if (negras[k].columna == j && negras[k].fila == i){
+						encontrado = 1;
+						printf("%s|", negras[k].codigo);
+						break;
+					}
+					encontrado = 0;
 				}
-				if (negras[k].columna == j && negras[k].fila == i){
-					encontrado = 1;
-					printf("%s|", negras[k].codigo);
-					break;
-				}
-				encontrado = 0;
+				if (!encontrado) printf(" |");
 			}
-			if (!encontrado) printf(" |");
+			puts("");
+
 		}
+		puts("\t  -----------------");
+		printf("\t   A B C D E F G H\n");
+
 		puts("");
+		
+		do {
+			puts("Introduzca un movimiento con el siguiente formato --> (A)(x)a1");
+			puts("PIEZA(Torre, Dama, Rey, Alfil, Caballo) columna(a-h) F1l4(1-8)");
+			puts("Sin letra mayúscula = movimiento de peón");
+			puts("Utiliza x si quieres capturar una pieza enemiga\n");
+			scanf("%s", buffer);
+		} while ((strlen(buffer) < 2) || strlen(buffer) > 5);
 
+		switch(strlen(buffer)){
+			case 2:
+			col = (int) buffer[0] - 96;
+			printf("%d", col);
+			if(col < 1 || col > 8){
+				puts("Error coordenada");
+				break;
+			}
+			fil = buffer[1] - '0';
+
+				for (i=8 ; i < 16 ; i++){
+					if(blancas[i].columna == col){
+						printf("\n\n%d", fil);
+						if(fil == blancas[i].fila+2 && blancas[i].movida==false){
+							blancas[i].fila +=2;
+							blancas[i].movida = true;
+						}
+						if (fil == blancas[i].fila+1){
+							blancas[i].fila++;
+							blancas[i].movida = true;
+							break;
+						}
+						else exit -1;
+					}
+				}
+			break;
+			case 3:
+				printf("%c", buffer[0]);
+			break;
+			case 4:
+
+			break;
+			case 5:
+			
+			break;
+		}
 	}
-	  puts("\t  -----------------");
-	printf("\t   A B C D E F G H\n");
-
-	puts("");
-
-	scanf("Jugador blanco, introduzca un movimiento: %s", &move);
-
 	return 0;
+
+
 }
