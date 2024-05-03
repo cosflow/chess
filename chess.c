@@ -1,7 +1,7 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
-#include "stdbool.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
 #define REYB "\xE2\x99\x9A"
 #define DAMAB "\xE2\x99\x9B"
@@ -38,189 +38,310 @@ struct Pieza{
 
 typedef struct Pieza Pieza;
 
+void imprimirTablero(Pieza * blancas[], Pieza * negras[], bool turno);
+void cargarTablero(Pieza * blancas[], Pieza * negras[]);
+int avancePBlancas(int fil, int col, Pieza * blancas[]);
+int avancePNegras(int fil, int col, Pieza * negras[]);
+int enroqueC(Pieza * fichas[]);
+
 int main(int argc, char *argv) {
 
 	int i,j,k;
-	char *move = malloc(sizeof(char)*4);
-	char buffer[100];
-	char* aux;
 	int fil,col;
+	bool turno = true;
+	char buffer[100];
 	int len;
 	bool jaque = false, jaquematecontomate = false;
-	int encontrado = 0;
-	Pieza blancas[16];
-	Pieza negras[16];
+	Pieza * blancas[16];
+	Pieza *negras[16];
 
-	int cont = 0;
-	blancas[0].codigo = REYB;
-	negras[0].codigo = REYN;
-	blancas[1].codigo = DAMAB;
-	negras[1].codigo = DAMAN;
+	for (i = 0; i < 16 ; i++){
+		blancas[i] = (Pieza *)malloc(sizeof( struct Pieza));
+		negras[i] = (Pieza *)malloc(sizeof( struct Pieza));
+	}
 
-	blancas[0].inicial = 'R';
-	negras[0].inicial = 'R';
-	blancas[1].inicial = 'D';
-	negras[1].inicial = 'D';
+	cargarTablero(blancas, negras);
 
-	blancas[0].columna = cE;
-	blancas[0].fila = 1;
-	negras[0].columna = cE;
-	negras[0].fila = 8;
-	negras[0].M = false;
-	blancas[0].M =false;
+	puts("-----------------------------------------------------");
+	puts("-----------------------AJEDREZ-----------------------");
+	puts("-----------------------------------------------------\n\n");
 
-	blancas[1].columna = cD;
-	negras[1].columna = cD;
-	blancas[1].fila = 1;
-	negras[1].fila = 8;
 
-	negras[1].M = false;
-	blancas[1].M = false;
+
+	while(!jaquematecontomate){
+
+		imprimirTablero(blancas, negras, turno);
+		
+		do {
+			puts("Introduzca un movimiento:");
+			scanf("%s", buffer);
+			len = strlen(buffer);
+		} while ((len < 2) || (len > 6));
+
+		switch (len){
+			case 2: //AVANCE PEONES
+			col = (int) buffer[0] - 96;
+			if(col < 1 || col > 8){
+				puts("Error coordenada");
+			}
+			fil = buffer[1] - '0';
+
+			if(fil < 1 || fil > 8){
+				puts("Error coordenada");
+			}
+			if(turno){
+				if(avancePBlancas(fil, col, blancas) == 0) turno = false;
+			}
+			else{
+				if(avancePNegras(fil, col, negras) == 0) turno = true;
+			}
+			break;
+			case 3: //PIEZAS y ENROQ CORTO
+				if(buffer[0] == 'O' && buffer[1] == '-' && buffer[2] == buffer[0]){
+					if(turno){
+						if(enrocarCorto(blancas) == 0) turno = false;
+					}
+					else{
+						if(enrocarCorto(negras) == 0) turno = true;
+					}
+				}
+				col = (int) buffer[1] - 96;
+				if(col < 1 || col > 8){
+					puts("Error coordenada");
+				}
+				fil = buffer[2] - '0';
+
+				if(fil < 1 || fil > 8){
+					puts("Error coordenada");
+				}
+				if(turno){
+					if(movB(buffer[0], fil, col, blancas) == 0) turno = false; 
+				}
+				else{
+					if(movN(buffer[0], fil, col, negras) == 0) turno = true;
+				}
+			break;
+			case 4: //CAPTURAS,PROMOCIONES, MOV COMPLEJOS, JAQUES
+			break;
+			case 5: //ENROQ LARGO, CAPTURAS COMPLEJAS,
+			break;
+			case 6: //CAPTURAS COMPLEJAS DOBLES 
+		}
+		
+		
+	}
+
+	for(i = 0; i < 16 ; i++){
+		free(blancas[i]);
+		free(negras[i]);
+	}
+	return 0;
+}
+
+void cargarTablero(Pieza * blancas[], Pieza * negras[]){
+
+	int i;
+
+	blancas[0]->codigo = REYB;
+	negras[0]->codigo = REYN;
+	blancas[1]->codigo = DAMAB;
+	negras[1]->codigo = DAMAN;
+
+	blancas[0]->inicial = 'R';
+	negras[0]->inicial = 'R';
+	blancas[1]->inicial = 'D';
+	negras[1]->inicial = 'D';
+
+	blancas[0]->columna = cE;
+	blancas[0]->fila = 1;
+	blancas[0]->M =false;
+	negras[0]->columna = cE;
+	negras[0]->fila = 8;
+	negras[0]->M = false;
+
+	blancas[1]->columna = cD;
+	negras[1]->columna = cD;
+	blancas[1]->fila = 1;
+	negras[1]->fila = 8;
+
+	negras[1]->M = false;
+	blancas[1]->M = false;
 
 	for(i = 0 ; i < 2 ; i++){
 
-		blancas[3*i+2].codigo = TORREB;
-		negras[3*i+2].codigo = TORREN;
+		blancas[3*i+2]->codigo = TORREB;
+		negras[3*i+2]->codigo = TORREN;
 
-		blancas[3*i+3].codigo = CABALLOB;
-		negras[3*i+3].codigo = CABALLON;
+		blancas[3*i+3]->codigo = CABALLOB;
+		negras[3*i+3]->codigo = CABALLON;
 
-		blancas[3*i+4].codigo = ALFILB;
-		negras[3*i+4].codigo = ALFILN;
+		blancas[3*i+4]->codigo = ALFILB;
+		negras[3*i+4]->codigo = ALFILN;
 
-		blancas[3*i+2].inicial = 'T';
-		negras[3*i+2].inicial = 'T';
+		blancas[3*i+2]->inicial = 'T';
+		negras[3*i+2]->inicial = 'T';
 
-		blancas[3*i+3].inicial = 'C';
-		negras[3*i+3].inicial = 'C';
+		blancas[3*i+3]->inicial = 'C';
+		negras[3*i+3]->inicial = 'C';
 
-		blancas[3*i+4].inicial = 'A';
-		negras[3*i+4].inicial = 'A';
+		blancas[3*i+4]->inicial = 'A';
+		negras[3*i+4]->inicial = 'A';
 
-		blancas[3*i+2].columna = 7*i+1;
-		negras[3*i+2].columna = 7*i+1;
+		blancas[3*i+2]->columna = 7*i+1;
+		negras[3*i+2]->columna = 7*i+1;
 
-		blancas[3*i+2].fila = 1;
-		negras[3*i+2].fila = 8;
+		blancas[3*i+2]->fila = 1;
+		negras[3*i+2]->fila = 8;
 
 
-		blancas[3*i+3].columna = i*5+2;
-		negras[3*i+3].columna = i*5+2;
+		blancas[3*i+3]->columna = i*5+2;
+		negras[3*i+3]->columna = i*5+2;
 
-		blancas[3*i+3].fila = 1;
-		negras[3*i+3].fila = 8;
+		blancas[3*i+3]->fila = 1;
+		negras[3*i+3]->fila = 8;
 
-		blancas[3*i+4].columna = 3 + 3*i;
-		negras[3*i+4].columna = 3 + 3*i;
+		blancas[3*i+4]->columna = 3 + 3*i;
+		negras[3*i+4]->columna = 3 + 3*i;
 		
-		blancas[3*i+4].fila = 1;
-		negras[3*i+4].fila = 8;
+		blancas[3*i+4]->fila = 1;
+		negras[3*i+4]->fila = 8;
 
-		blancas[3*i+2].M = false;
-		blancas[3*i+3].M = false;
-		blancas[3*i+4].M = false;
-		negras[3*i+2].M = false;
-		negras[3*i+3].M = false;
-		negras[3*i+4].M = false;
+		blancas[3*i+2]->M = false;
+		blancas[3*i+3]->M = false;
+		blancas[3*i+4]->M = false;
+		negras[3*i+2]->M = false;
+		negras[3*i+3]->M = false;
+		negras[3*i+4]->M = false;
 	}
-
 	for(i = 0 ; i < 8 ; i++){
-		blancas[i+8].codigo = PEONB;
-		negras[i+8].codigo = PEONN;
-		blancas[i+8].inicial = 'P';
-		negras[i+8].inicial = 'P';
-		blancas[i+8].columna = i+1;
-		blancas[i+8].fila = 2;
-		negras[i+8].columna = i+1;
-		negras[i+8].fila = 7;
-		blancas[i+8].M = false;
-		negras[i+8].M = false;
-		blancas[i+8].movida = false;
-		negras[i+8].movida = false;
+		blancas[i+8]->codigo = PEONB;
+		negras[i+8]->codigo = PEONN;
+		blancas[i+8]->inicial = 'P';
+		negras[i+8]->inicial = 'P';
+		blancas[i+8]->columna = i+1;
+		blancas[i+8]->fila = 2;
+		negras[i+8]->columna = i+1;
+		negras[i+8]->fila = 7;
+		blancas[i+8]->M = false;
+		negras[i+8]->M = false;
+		blancas[i+8]->movida = false;
+		negras[i+8]->movida = false;
 	}
+}
 
-	puts("----------------------------------------");
-	puts("----------------AJEDREZ-----------------");
-	puts("----------------------------------------\n\n");
-
-
-
-	puts("Juegan BLANCAS");
-	while(1){
-
+void imprimirTablero(Pieza *blancas[], Pieza *negras[], bool turno)
+{
+	int i,j,k;
+	bool encontrado = false;
+	if ((turno)){
+		puts(" \t  -------Turno --> BLANCAS---------\n");
 		for (i = 8 ; i >= 1; i--){
-			puts("\t  -----------------");
-			printf(" \t%d |", i);
+			puts("\t  ---------------------------------");
+			printf(" \t%d | ", i);
 			for(j = 1 ; j <= 8 ; j++){
 				for(k = 0; k < 16; k++){
-					if (blancas[k].columna == j && blancas[k].fila == i){
+					if (blancas[k]->columna == j && blancas[k]->fila == i){
 						encontrado = 1;
-						printf("%s|", blancas[k].codigo);
+						printf("%s | ", blancas[k]->codigo);
 						break;
 					}
-					if (negras[k].columna == j && negras[k].fila == i){
+					if (negras[k]->columna == j && negras[k]->fila == i){
 						encontrado = 1;
-						printf("%s|", negras[k].codigo);
+						printf("%s | ", negras[k]->codigo);
 						break;
 					}
 					encontrado = 0;
 				}
-				if (!encontrado) printf(" |");
+				if (!encontrado) printf("  | ");
 			}
 			puts("");
-
 		}
-		puts("\t  -----------------");
-		printf("\t   A B C D E F G H\n");
+		puts("\t  ---------------------------------");
+		printf("\t    A   B   C   D   E   F   G   H \n\n");
+	}
+	else{
+		puts(" \t  -------Turno --> NEGRAS----------\n");
+		for (i = 1 ; i <= 8 ; i++){
+			puts("\t  ---------------------------------");
+			printf(" \t%d | ", i);
+			for(j = 8 ; j >= 1 ; j--){
+				for(k = 0; k < 16; k++){
+					if (blancas[k]->columna == j && blancas[k]->fila == i){
+						encontrado = 1;
+						printf("%s | ", blancas[k]->codigo);
+						break;
+					}
+					if (negras[k]->columna == j && negras[k]->fila == i){
+						encontrado = 1;
+						printf("%s | ", negras[k]->codigo);
+						break;
+					}
+					encontrado = 0;
+				}
+				if (!encontrado) printf("  | ");
 
-		puts("");
-		
-		do {
-			puts("Introduzca un movimiento con el siguiente formato --> (A)(x)a1");
-			puts("PIEZA(Torre, Dama, Rey, Alfil, Caballo) columna(a-h) F1l4(1-8)");
-			puts("Sin letra mayúscula = movimiento de peón");
-			puts("Utiliza x si quieres capturar una pieza enemiga\n");
-			scanf("%s", buffer);
-		} while ((strlen(buffer) < 2) || strlen(buffer) > 5);
+			}
+			puts("");
+		}
+		puts("\t  ---------------------------------");
+		printf("\t    H   G   F   E   D   C   B   A \n\n");
 
-		switch(strlen(buffer)){
-			case 2:
-			col = (int) buffer[0] - 96;
-			printf("%d", col);
-			if(col < 1 || col > 8){
-				puts("Error coordenada");
+	}
+}
+
+int avancePBlancas(int fil,int col, Pieza * blancas[]){
+
+	int i;
+
+	for (i=8 ; i < 16 ; i++){
+		if(blancas[i]->columna == col){
+			if(fil == blancas[i]->fila+2 && blancas[i]->movida==false){
+				blancas[i]->fila +=2;
+				blancas[i]->movida = true;
 				break;
 			}
-			fil = buffer[1] - '0';
+			if (fil == blancas[i]->fila+1){
+				blancas[i]->fila++;
+				blancas[i]->movida = true;
+				break;
+			}
+			else return -3;
+		}
+	}			
+	return 0;
+}
 
-				for (i=8 ; i < 16 ; i++){
-					if(blancas[i].columna == col){
-						printf("\n\n%d", fil);
-						if(fil == blancas[i].fila+2 && blancas[i].movida==false){
-							blancas[i].fila +=2;
-							blancas[i].movida = true;
-						}
-						if (fil == blancas[i].fila+1){
-							blancas[i].fila++;
-							blancas[i].movida = true;
-							break;
-						}
-						else exit -1;
-					}
-				}
-			break;
-			case 3:
-				printf("%c", buffer[0]);
-			break;
-			case 4:
+int avancePNegras(int fil, int col, Pieza * negras[]){
 
-			break;
-			case 5:
-			
-			break;
+	int i;
+
+	for (i=8 ; i < 16 ; i++){
+		if(negras[i]->columna == col){
+			if(fil == negras[i]->fila-2 && negras[i]->movida==false){
+				negras[i]->fila -=2;
+				negras[i]->movida = true;
+				break;
+			}
+			if (fil == negras[i]->fila-1){
+				negras[i]->fila--;
+				negras[i]->movida = true;
+				break;
+			}
+			else exit -1;
 		}
 	}
+		
 	return 0;
+}
 
+int avanceCBlancas(const char *buffer, Pieza * blancas[]){
+
+}
+
+int avanceCNegras(const char * buffer, Pieza * negras){
+
+}
+
+int enroqueC(Pieza * piezas[]){
 
 }
