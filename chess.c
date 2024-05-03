@@ -43,6 +43,9 @@ void cargarTablero(Pieza * blancas[], Pieza * negras[]);
 int avancePBlancas(int fil, int col, Pieza * blancas[]);
 int avancePNegras(int fil, int col, Pieza * negras[]);
 int enroqueC(Pieza * fichas[]);
+int movB(char pieza, int fil, int col, Pieza * blancas[]);
+int movN(char pieza, int fil, int col, Pieza * negras[]);
+
 
 int main(int argc, char *argv) {
 
@@ -99,10 +102,10 @@ int main(int argc, char *argv) {
 			case 3: //PIEZAS y ENROQ CORTO
 				if(buffer[0] == 'O' && buffer[1] == '-' && buffer[2] == buffer[0]){
 					if(turno){
-						if(enrocarCorto(blancas) == 0) turno = false;
+						if(enroqueC(blancas) == 0) turno = false;
 					}
 					else{
-						if(enrocarCorto(negras) == 0) turno = true;
+						if(enroqueC(negras) == 0) turno = true;
 					}
 				}
 				col = (int) buffer[1] - 96;
@@ -127,9 +130,7 @@ int main(int argc, char *argv) {
 			break;
 			case 6: //CAPTURAS COMPLEJAS DOBLES 
 		}
-		
-		
-	}
+		}
 
 	for(i = 0; i < 16 ; i++){
 		free(blancas[i]);
@@ -344,4 +345,67 @@ int avanceCNegras(const char * buffer, Pieza * negras){
 
 int enroqueC(Pieza * piezas[]){
 
+}
+
+int movB(char pieza, int fil, int col, Pieza * blancas[]){
+
+	int i;
+	int cdif, fdif;
+	switch (pieza)
+	{
+	case 'A':
+		for(i = 0 ; i < 2 ; i++){
+			if(!blancas[3*i+4]->M && blancas[3*i+4]->inicial == 'A'){
+				cdif = blancas[3*i+4]->columna - col;
+				fdif = blancas[3*i+4]->fila - fil;
+				if(cdif == fdif || cdif == fdif*(-1)){
+					blancas[3*i+4]->fila = fil;
+					blancas[3*i+4]->columna = col;
+					return 0;
+				}
+			}
+		}
+		break;
+	case 'C':
+		for(i = 0 ; i < 2 ; i++){
+			if(!blancas[3*i+3]->M && blancas[3*i+3]->inicial == 'C'){
+				cdif = blancas[3*i+3]->columna - col;
+				fdif = blancas[3*i+3]->fila - fil;
+				fdif *=fdif;
+				cdif *=cdif;
+				if((fdif == 4 && cdif == 1)||(fdif == 1 && cdif == 4))
+				{
+					blancas[3*i+3]->fila = fil;
+					blancas[3*i+3]->columna = col;
+					return 0;
+				}
+			}
+		}
+		break;
+	case 'T':
+		for(i = 0 ; i < 2 ; i++){
+			if(!blancas[3*i+2]->M && blancas[3*i+2]->inicial == 'T'){
+				if((fil == blancas[3*i+2]->fila)^(col == blancas[3*i+2]->columna))
+				{
+					blancas[3*i+2]->fila = fil;
+					blancas[3*i+2]->columna = col;
+					return 0;
+				}
+			}
+		}
+		break;
+	case 'D':
+		break;
+	case 'R':
+		break;
+	default:
+		return -1;
+		break;
+	}
+	return -2;
+}
+
+int movN(char pieza, int fil, int col, Pieza * negras[]){
+
+	return 0;
 }
