@@ -50,6 +50,7 @@ int enroqueC(Pieza * fichas[]);
 int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]);
 int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool turno);
 void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida);
+int zamparPieza(int fil, int col, char * tablero[], Pieza * comilona);
 
 int main(int argc, char *argv) {
 
@@ -140,6 +141,38 @@ int main(int argc, char *argv) {
 				else index = movimientoPieza(buffer[0], fil, col,negras);
 			break;
 			case 4: //CAPTURAS,PROMOCIONES, MOV COMPLEJOS, JAQUES
+				if(buffer[2] == '='){
+					col = (int) buffer[0] - 96;
+					if(col < 1 || col > 8){
+						puts("Error coordenada");
+					}
+					fil = buffer[1] - '0';
+					if(fil < 1 || fil > 8){
+						puts("Error coordenada");
+					}
+					if (turno) index = avancePBlancas(fil, col, blancas);
+					else index = avancePNegras(fil, col, negras);
+				}
+				if(buffer[1] == 'x'){
+					
+				}
+				fil = buffer[1] - '0';
+				if(col < 1 || col > 8){
+					fil = buffer[1] - 96;
+					col = buffer[2] - '0';
+				}
+				else col = buffer[1] - 96;
+				
+				if(col < 1 || col > 8){
+					puts("Error coordenada");
+					break;
+				}
+				fil = buffer[2] - '0';
+				if(fil < 1 || fil > 8){
+					puts("Error coordenada");
+				}
+				if(turno) index = movimientoPieza(buffer[0], fil, col,blancas);
+				else index = movimientoPieza(buffer[0], fil, col,negras);
 			break;
 			case 5: //ENROQ LARGO, CAPTURAS COMPLEJAS,
 			break;
@@ -423,6 +456,9 @@ int avancePNegras(int fil, int col, Pieza * negras[]){
 	return E_COORD;
 }
 
+int promocionB(int fil,int col, Pieza * blancas[], char prom){
+
+}
 int enroqueC(Pieza * piezas[]){
 	if (!piezas[0]->movida && !piezas[5]->movida){
 		piezas[0]->columna = piezas[5]->columna - 1;
@@ -692,6 +728,12 @@ int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool tur
 	}
 
 }
+
+int zamparPieza(int fil, int col, char * tablero[], Pieza * comilona){
+
+
+}
+
 
 void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida){
 	tablero[movida->fila-1][movida->columna-1] = CASILLAVACIA;
