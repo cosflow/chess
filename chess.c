@@ -364,8 +364,6 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 				fdif = piezas[3*i+4]->fila - fil;
 				if(cdif == fdif || cdif == fdif*(-1)){
 					if(cdif = 0) return E_COORD;
-					piezas[3*i+4]->fila = fil;
-					piezas[3*i+4]->columna = col;
 					return (3*i+4);
 				}
 			}
@@ -381,8 +379,6 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 				cdif *=cdif;
 				if((fdif == 4 && cdif == 1)||(fdif == 1 && cdif == 4))
 				{
-					piezas[3*i+3]->fila = fil;
-					piezas[3*i+3]->columna = col;
 					return (3*i+3);
 				}
 			}
@@ -394,8 +390,6 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 			if(!piezas[3*i+2]->M && piezas[3*i+2]->inicial == 'T'){
 				if((fil == piezas[3*i+2]->fila)^(col == piezas[3*i+2]->columna))
 				{
-					piezas[3*i+2]->fila = fil;
-					piezas[3*i+2]->columna = col;
 					if(!piezas[3*i+2]->movida) piezas[0]->movida = true;
 					return (3*i+2);
 				}
@@ -412,8 +406,6 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 		cdif = piezas[1]->columna - col;
 		fdif = piezas[1]->fila - fil;
 		if(cdif == fdif || cdif == fdif*(-1)){
-			piezas[1]->fila = fil;
-			piezas[1]->columna = col;
 			return 1;
 		}
 		return -2;
@@ -424,8 +416,6 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 		fdif *=fdif;
 		cdif *=cdif;
 		if(cdif + fdif <= 1){
-			piezas[0]-> fila = fil;
-			piezas[0]-> columna = col;
 			return 0;
 		}
 		if(!piezas[0]->movida) piezas[0]->movida = true;
@@ -518,6 +508,7 @@ int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool tur
 }
 
 void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida){
+	printf("%d - %d --> %d - %d", movida->fila, movida->columna, fil, col);
 	tablero[movida->fila-1][movida->columna-1] = CASILLAVACIA;
 	movida->fila = fil;
 	movida->columna = col;
