@@ -457,42 +457,42 @@ int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool tur
 			return 0;
 		break;
 		case 'A':
-			if (fdif > 0 && cdif > 0){
-				for(i = movida->fila-1 +1; i <= fil-1; i++){
-					for(j = movida->columna-1 +1; j <= col -1 ; j++){
-						if (tablero[i][j] != CASILLAVACIA){
-							return E_ILEGAL;
-						}
-					}
-				}
-			}
-			else if (fdif < 0 && cdif > 0){
-				for(i = movida->fila-1 +1; i >= fil-1; i--){
-					for(j = movida->columna-1 +1; j <= col-1; j++){
-						if (tablero[i][j] != CASILLAVACIA){
-							return E_ILEGAL;
-						}
-					}
-				}
-			}
-			else if (fdif > 0 && cdif < 0){
-				for(i = movida->fila-1 +1; i <= fil-1; i++){
-					for(j = movida->columna-1 +1; j >= col-1 ; j--){
-						if (tablero[i][j] != CASILLAVACIA){
-							return E_ILEGAL;
-						}
-					}
-				}
-			}
-			else{
-				for(i = movida->fila-1 +1; i >= fil-1; i--){
-					for(j = movida->columna-1 +1; j >= col-1; j--){
-						if (tablero[i][j] != CASILLAVACIA){
-							return E_ILEGAL;
-						}
-					}
-				}
-			}
+			// if (fdif > 0 && cdif > 0){
+			// 	for(i = movida->fila-1 +1; i <= fil-1; i++){
+			// 		for(j = movida->columna-1 +1; j <= col -1 ; j++){
+			// 			if (tablero[i][j] != CASILLAVACIA){
+			// 				return E_ILEGAL;
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// else if (fdif < 0 && cdif > 0){
+			// 	for(i = movida->fila-1 +1; i >= fil-1; i--){
+			// 		for(j = movida->columna-1 +1; j <= col-1; j++){
+			// 			if (tablero[i][j] != CASILLAVACIA){
+			// 				return E_ILEGAL;
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// else if (fdif > 0 && cdif < 0){
+			// 	for(i = movida->fila-1 +1; i <= fil-1; i++){
+			// 		for(j = movida->columna-1 +1; j >= col-1 ; j--){
+			// 			if (tablero[i][j] != CASILLAVACIA){
+			// 				return E_ILEGAL;
+			// 			}
+			// 		}
+			// 	}
+			// }
+			// else{
+			// 	for(i = movida->fila-1 +1; i >= fil-1; i--){
+			// 		for(j = movida->columna-1 +1; j >= col-1; j--){
+			// 			if (tablero[i][j] != CASILLAVACIA){
+			// 				return E_ILEGAL;
+			// 			}
+			// 		}
+			// 	}
+			// }
 			return 0;
 		break;
 		case 'C':
