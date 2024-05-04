@@ -144,7 +144,7 @@ int main(int argc, char *argv) {
 			break;
 			case 6: //CAPTURAS COMPLEJAS DOBLES 
 		}
-
+		printf("%d", index);
 		if(index>=0){
 			if(turno){
 				if(comprobarCamino(fil, col, blancas[index], tablero, turno) != E_ILEGAL){
@@ -359,7 +359,7 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 	{
 	case 'A':
 		for(i = 0 ; i < 2 ; i++){
-			if(!piezas[3*i+4]->M && piezas[3*i+4]->inicial == 'A'){
+			if(!piezas[3*i+4]->M){
 				cdif = piezas[3*i+4]->columna - col;
 				fdif = piezas[3*i+4]->fila - fil;
 				if(cdif == fdif || cdif == fdif*(-1)){
@@ -368,11 +368,11 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 				}
 			}
 		}
-		return -2;
+		return E_ILEGAL;
 		break;
 	case 'C':
 		for(i = 0 ; i < 2 ; i++){
-			if(!piezas[3*i+3]->M && piezas[3*i+3]->inicial == 'C'){
+			if(!piezas[3*i+3]->M){
 				cdif = piezas[3*i+3]->columna - col;
 				fdif = piezas[3*i+3]->fila - fil;
 				fdif *=fdif;
@@ -383,11 +383,11 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 				}
 			}
 		}
-		return -2;
+		return E_ILEGAL;
 		break;
 	case 'T':
 		for(i = 0 ; i < 2 ; i++){
-			if(!piezas[3*i+2]->M && piezas[3*i+2]->inicial == 'T'){
+			if(!piezas[3*i+2]->M){
 				if((fil == piezas[3*i+2]->fila)^(col == piezas[3*i+2]->columna))
 				{
 					if(!piezas[3*i+2]->movida) piezas[0]->movida = true;
@@ -395,20 +395,18 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 				}
 			}
 		}
-		return -2;
+		return E_ILEGAL;
 		break;
 	case 'D':
 		if ((piezas[1]->fila == fil)^piezas[1]->columna == col){
-			piezas[1]->fila = fil;
-			piezas[1]->columna = col;
 			return 1;
 		}
 		cdif = piezas[1]->columna - col;
 		fdif = piezas[1]->fila - fil;
-		if(cdif == fdif || cdif == fdif*(-1)){
+		if((cdif == fdif || cdif == fdif*(-1))&& cdif>0){
 			return 1;
 		}
-		return -2;
+		return E_ILEGAL;
 		break;
 	case 'R':
 		cdif = piezas[0]->columna - col;
@@ -418,7 +416,6 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 		if(cdif + fdif <= 1){
 			return 0;
 		}
-		if(!piezas[0]->movida) piezas[0]->movida = true;
 		return E_ILEGAL;
 		break;
 	default:
