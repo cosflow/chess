@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdbool.h>
 
 #define REYB "\xE2\x99\x9A"
@@ -17,8 +18,8 @@
 #define CABALLON "\xE2\x99\x98"
 #define PEONN "\xE2\x99\x99"
 
-#define E_ILEGAL -22
-#define E_COORD -11
+#define E_ILEGAL -222
+#define E_COORD -111
 #define CASILLAVACIA ' '
 
 #define cA 1
@@ -144,7 +145,6 @@ int main(int argc, char *argv) {
 			break;
 			case 6: //CAPTURAS COMPLEJAS DOBLES 
 		}
-		printf("%d", index);
 		if(index>=0){
 			if(turno){
 				if(comprobarCamino(fil, col, blancas[index], tablero, turno) != E_ILEGAL){
@@ -271,7 +271,47 @@ void imprimirTablero(char * tablero[], bool turno)
 			puts("\t  ---------------------------------");
 			printf(" \t%d | ", i+1);
 			for(j = 0 ; j < 8 ; j++){
-				printf("%c | ", tablero[i][j]);
+				switch(tablero[i][j]){
+					case 'P':
+						printf("%s | ", PEONB);
+						break;
+					case 'p':
+						printf("%s | ", PEONN);
+						break;
+					case 'T':
+						printf("%s | ", TORREB);
+						break;
+					case 't':
+						printf("%s | ", TORREN);
+						break;
+					case 'C':
+						printf("%s | ", CABALLOB);
+						break;
+					case 'c':
+						printf("%s | ", CABALLON);
+						break;
+					case 'A':
+						printf("%s | ", ALFILB);
+						break;
+					case 'a':
+						printf("%s | ", ALFILN);
+						break;
+					case 'D':
+						printf("%s | ", DAMAB);
+						break;
+					case 'd':
+						printf("%s | ", DAMAN);
+						break;
+					case 'R':
+						printf("%s | ", REYB);
+						break;
+					case 'r':
+						printf("%s | ", REYN);
+						break;
+					default:
+						printf("  | ");
+						break;
+				}
 			}
 			puts("");
 		}
@@ -284,7 +324,47 @@ void imprimirTablero(char * tablero[], bool turno)
 			puts("\t  ---------------------------------");
 			printf(" \t%d | ", i+1);
 			for(j = 7 ; j >= 0 ; j--){
-				printf("%c | ", tablero[i][j]);
+				switch(tablero[i][j]){
+					case 'P':
+						printf("%s | ", PEONB);
+						break;
+					case 'p':
+						printf("%s | ", PEONN);
+						break;
+					case 'T':
+						printf("%s | ", TORREB);
+						break;
+					case 't':
+						printf("%s | ", TORREN);
+						break;
+					case 'C':
+						printf("%s | ", CABALLOB);
+						break;
+					case 'c':
+						printf("%s | ", CABALLON);
+						break;
+					case 'A':
+						printf("%s | ", ALFILB);
+						break;
+					case 'a':
+						printf("%s | ", ALFILN);
+						break;
+					case 'D':
+						printf("%s | ", DAMAB);
+						break;
+					case 'd':
+						printf("%s | ", DAMAN);
+						break;
+					case 'R':
+						printf("%s | ", REYB);
+						break;
+					case 'r':
+						printf("%s | ", REYN);
+						break;
+					default:
+						printf("  | ");
+						break;
+				}
 			}
 			puts("");
 		}
@@ -355,7 +435,7 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 
 	int i;
 	int cdif, fdif;
-	switch (pieza)
+	switch (toupper(pieza))
 	{
 	case 'A':
 		for(i = 0 ; i < 2 ; i++){
@@ -403,7 +483,10 @@ int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 		}
 		cdif = piezas[1]->columna - col;
 		fdif = piezas[1]->fila - fil;
-		if((cdif == fdif || cdif == fdif*(-1))&& cdif>0){
+		fdif *=fdif;
+		cdif *=cdif;
+		
+		if((cdif == fdif || (cdif > 0 && fdif == 0) || (fdif > 0 && cdif == 0))){
 			return 1;
 		}
 		return E_ILEGAL;
@@ -429,83 +512,188 @@ int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool tur
 
 	int i, j, fdif, cdif;
 
+	// printf("\n%d, %d --> %d, %d\n", movida->fila, movida->columna, fil,col);
 	fdif = fil - movida->fila;
 	cdif = col - movida->columna;
 
-	switch(movida->inicial){
+	// printf("fdif->%d\ncdif->%d", fdif, cdif);
+	switch(toupper(movida->inicial)){
 		case 'P':
-			if(turno){
-				if (!movida->movida && tablero[movida->fila-1+2][movida->columna-1] != CASILLAVACIA){
-					return E_ILEGAL;
+			if (tablero[movida->fila-1+fdif][movida->columna-1] != CASILLAVACIA)
+			{
+				return E_ILEGAL;
+			}
+			else return 0;
+
+		break;
+		case 'A':
+			if (fdif > 0 && cdif > 0){
+				j = movida->columna-1 +1;
+				for(i = movida->fila-1 +1 ; i <= movida->fila+fdif -1; i++){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j++;
 				}
-				if (tablero[movida->fila-1+1][movida->columna-1] != CASILLAVACIA){
-					return E_ILEGAL;
+			}
+			else if (fdif < 0 && cdif > 0){
+				j = movida->columna-1 +1;
+				for(i = movida->fila-1 -1 ; i >= movida->fila+fdif -1; i--){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j++;
+				}
+			}
+			else if (fdif > 0 && cdif < 0){
+				j = movida->columna-1 -1;
+				for(i = movida->fila-1 +1 ; i <= movida->fila+fdif -1; i++){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j--;
 				}
 			}
 			else{
-				if (!movida->movida && tablero[movida->fila-1-2][movida->columna-1] != CASILLAVACIA){
-					return E_ILEGAL;
-				}
-				if (tablero[movida->fila-1-1][movida->columna-1] != CASILLAVACIA){
-					return E_ILEGAL;
+				j = movida->columna-1 -1;
+				for(i = movida->fila-1 -1 ; i >= movida->fila+fdif -1; i--){
+					printf("\n%d, %d", i, j);
+					if (tablero[i][j] != CASILLAVACIA){
+						printf("%c", tablero[i][j]);
+						return E_ILEGAL;
+					}
+					j--;
 				}
 			}
-			
-			return 0;
-		break;
-		case 'A':
-			// if (fdif > 0 && cdif > 0){
-			// 	for(i = movida->fila-1 +1; i <= fil-1; i++){
-			// 		for(j = movida->columna-1 +1; j <= col -1 ; j++){
-			// 			if (tablero[i][j] != CASILLAVACIA){
-			// 				return E_ILEGAL;
-			// 			}
-			// 		}
-			// 	}
-			// }
-			// else if (fdif < 0 && cdif > 0){
-			// 	for(i = movida->fila-1 +1; i >= fil-1; i--){
-			// 		for(j = movida->columna-1 +1; j <= col-1; j++){
-			// 			if (tablero[i][j] != CASILLAVACIA){
-			// 				return E_ILEGAL;
-			// 			}
-			// 		}
-			// 	}
-			// }
-			// else if (fdif > 0 && cdif < 0){
-			// 	for(i = movida->fila-1 +1; i <= fil-1; i++){
-			// 		for(j = movida->columna-1 +1; j >= col-1 ; j--){
-			// 			if (tablero[i][j] != CASILLAVACIA){
-			// 				return E_ILEGAL;
-			// 			}
-			// 		}
-			// 	}
-			// }
-			// else{
-			// 	for(i = movida->fila-1 +1; i >= fil-1; i--){
-			// 		for(j = movida->columna-1 +1; j >= col-1; j--){
-			// 			if (tablero[i][j] != CASILLAVACIA){
-			// 				return E_ILEGAL;
-			// 			}
-			// 		}
-			// 	}
-			// }
 			return 0;
 		break;
 		case 'C':
+			if (tablero[fil-1][col-1] != CASILLAVACIA)
+			{
+				return E_ILEGAL;
+			}
+			else return 0;
 		break;
 		case 'T':
+			if (fdif == 0 && cdif < 0){
+
+				for (i = movida->columna-1; i >= col -1 ; i--){
+					if (tablero[fil-1][i] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+			if (fdif == 0 && cdif > 0){
+
+				for (i = movida->columna-1; i <= col -1 ; i++){
+					if (tablero[fil-1][i] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+
+			if (fdif < 0 && cdif == 0){
+
+				for (i = movida->fila-1; i >= fil -1 ; i--){
+					if (tablero[i][col-1] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+			if (fdif > 0 && cdif == 0){
+
+				for (i = movida->fila-1; i <= fil -1 ; i++){
+					if (tablero[i][col-1] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
 		break;
 		case 'D':
+			if (fdif > 0 && cdif > 0){
+				j = movida->columna-1 +1;
+				for(i = movida->fila-1 +1 ; i <= movida->fila+fdif -1; i++){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j++;
+				}
+			}
+			else if (fdif < 0 && cdif > 0){
+				j = movida->columna-1 +1;
+				for(i = movida->fila-1 -1 ; i >= movida->fila+fdif -1; i--){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j++;
+				}
+			}
+			else if (fdif > 0 && cdif < 0){
+				j = movida->columna-1 -1;
+				for(i = movida->fila-1 +1 ; i <= movida->fila+fdif -1; i++){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j--;
+				}
+			}
+			else if (fdif == 0 && cdif < 0){
+
+				for (i = movida->columna-1; i >= col -1 ; i--){
+					if (tablero[fil-1][i] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+			else if (fdif == 0 && cdif > 0){
+
+				for (i = movida->columna-1; i <= col -1 ; i++){
+					if (tablero[fil-1][i] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+
+			else if (fdif < 0 && cdif == 0){
+
+				for (i = movida->fila-1; i >= fil -1 ; i--){
+					if (tablero[i][col-1] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+
+			else if (fdif > 0 && cdif == 0){
+
+				for (i = movida->fila-1; i <= fil -1 ; i++){
+					if (tablero[i][col-1] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+				}
+			}
+			else {
+				j = movida->columna-1 -1;
+				for(i = movida->fila-1 -1 ; i >= movida->fila+fdif -1; i--){
+					if (tablero[i][j] != CASILLAVACIA){
+						return E_ILEGAL;
+					}
+					j--;
+				}
+			}
+			return 0;
 		break;
 		case 'R':
+			if (tablero[fil-1][col-1] != CASILLAVACIA)
+			{
+				return E_ILEGAL;
+			}
+			else return 0;
 		break;
 	}
 
 }
 
 void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida){
-	printf("%d - %d --> %d - %d", movida->fila, movida->columna, fil, col);
 	tablero[movida->fila-1][movida->columna-1] = CASILLAVACIA;
 	movida->fila = fil;
 	movida->columna = col;
