@@ -176,7 +176,8 @@ int main(int argc, char *argv) {
 			break;
 			case 5: //ENROQ LARGO, CAPTURAS COMPLEJAS,
 			break;
-			case 6: //CAPTURAS COMPLEJAS DOBLES 
+			case 6: 
+			break;//CAPTURAS COMPLEJAS DOBLES 
 		}
 		if(index>=0){
 			if(turno){
