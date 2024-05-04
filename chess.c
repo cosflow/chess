@@ -19,6 +19,7 @@
 
 #define E_ILEGAL -22
 #define E_COORD -11
+#define CASILLAVACIA ' '
 
 #define cA 1
 #define cB 2
@@ -38,23 +39,22 @@ struct Pieza{
 	bool M;
 	bool movida;
 };
-
 typedef struct Pieza Pieza;
 
-void imprimirTablero(Pieza * blancas[], Pieza * negras[], bool turno);
+void imprimirTablero(char *tablero[], bool turno);
 void cargarTablero(Pieza * blancas[], Pieza * negras[]);
 int avancePBlancas(int fil, int col, Pieza * blancas[]);
 int avancePNegras(int fil, int col, Pieza * negras[]);
 int enroqueC(Pieza * fichas[]);
-int movP(char pieza, int fil, int col, Pieza * piezas[]);
-int * comprobarCamino(int fil, int col, Pieza * movida, Pieza * blancas[], Pieza * negras[]);
+int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]);
+int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool turno);
+void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida);
 
 int main(int argc, char *argv) {
 
 	int i,j,k;
 	int fil,col;
 	int index;
-	int * coord;
 	bool turno = true;
 	char buffer[100];
 	int len;
@@ -62,12 +62,29 @@ int main(int argc, char *argv) {
 	Pieza * blancas[16];
 	Pieza *negras[16];
 
+	char * tablero[8];
+
 	for (i = 0; i < 16 ; i++){
 		blancas[i] = (Pieza *)malloc(sizeof( struct Pieza));
 		negras[i] = (Pieza *)malloc(sizeof( struct Pieza));
 	}
 
+	for(i = 0 ; i < 8 ; i++){
+		tablero[i] = (char *)malloc(sizeof(char)*8);
+	}
+
 	cargarTablero(blancas, negras);
+
+	for (i = 0 ; i < 8 ; i++){
+		for (j = 0 ; j < 8 ; j++){
+			tablero[i][j] = CASILLAVACIA;
+		}
+	}
+	for (i = 0 ; i < 16 ; i++){
+
+		tablero[blancas[i]->fila-1][blancas[i]->columna-1] = blancas[i]->inicial;
+		tablero[negras[i]->fila-1][negras[i]->columna-1] = negras[i]->inicial;
+	}
 
 	puts("-----------------------------------------------------");
 	puts("-----------------------AJEDREZ-----------------------");
@@ -77,7 +94,7 @@ int main(int argc, char *argv) {
 
 	while(!jaquematecontomate){
 
-		imprimirTablero(blancas, negras, turno);
+		imprimirTablero(tablero, turno);
 		
 		do {
 			puts("Introduzca un movimiento:");
@@ -87,38 +104,16 @@ int main(int argc, char *argv) {
 
 		switch (len){
 			case 2: //AVANCE PEONES
-			col = (int) buffer[0] - 96;
-			if(col < 1 || col > 8){
-				puts("Error coordenada");
-			}
-			fil = buffer[1] - '0';
-
-			if(fil < 1 || fil > 8){
-				puts("Error coordenada");
-			}
-			if(turno){
-				if(index = avancePBlancas(fil, col, blancas) >= 0){
-					coord = comprobarCamino(fil, col, blancas[index], blancas, negras);
-					if(coord != NULL){
-						blancas[index]->fila = coord[0];
-						blancas[index]->columna = coord[1];
-						blancas[index]->movida = true;
-						turno = false;
-					}
-				} 
-			}
-			else{
-				if(index = avancePNegras(fil, col, negras) >= 0){
-					coord = comprobarCamino(fil, col, negras[index], blancas, negras);
-					if(coord != NULL){
-						printf("%d", index);
-						negras[index]->fila = coord[0];
-						negras[index]->columna = coord[1];
-						negras[index]->movida = true;
-						turno = true;
-					}
-				} 
-			}
+				col = (int) buffer[0] - 96;
+				if(col < 1 || col > 8){
+					puts("Error coordenada");
+				}
+				fil = buffer[1] - '0';
+				if(fil < 1 || fil > 8){
+					puts("Error coordenada");
+				}
+				if (turno) index = avancePBlancas(fil, col, blancas);
+				else index = avancePNegras(fil, col, negras);
 			break;
 			case 3: //PIEZAS y ENROQ CORTO
 				if(buffer[0] == 'O' && buffer[1] == '-' && buffer[2] == buffer[0]){
@@ -137,23 +132,32 @@ int main(int argc, char *argv) {
 					break;
 				}
 				fil = buffer[2] - '0';
-
 				if(fil < 1 || fil > 8){
 					puts("Error coordenada");
-					break;
 				}
-				if(turno){
-					if(movP(buffer[0], fil, col, blancas) == 0) turno = false; 
-				}
-				else{
-					if(movP(buffer[0], fil, col, negras) == 0) turno = true;
-				}
+				if(turno) index = movimientoPieza(buffer[0], fil, col,blancas);
+				else index = movimientoPieza(buffer[0], fil, col,negras);
 			break;
 			case 4: //CAPTURAS,PROMOCIONES, MOV COMPLEJOS, JAQUES
 			break;
 			case 5: //ENROQ LARGO, CAPTURAS COMPLEJAS,
 			break;
 			case 6: //CAPTURAS COMPLEJAS DOBLES 
+		}
+
+		if(index>=0){
+			if(turno){
+				if(comprobarCamino(fil, col, blancas[index], tablero, turno) != E_ILEGAL){
+					confirmarMovimiento(fil, col, tablero, blancas[index]);
+					turno = false;
+				}
+			} 
+			else{
+				if(comprobarCamino(fil, col, negras[index], tablero, turno) != E_ILEGAL){
+					confirmarMovimiento(fil, col, tablero, negras[index]);
+					turno = true;
+				}
+			}
 		}
 
 		if(blancas[0]->M || negras[0]->M) jaquematecontomate = true;
@@ -163,6 +167,7 @@ int main(int argc, char *argv) {
 		free(blancas[i]);
 		free(negras[i]);
 	}
+	
 	return 0;
 }
 
@@ -176,9 +181,9 @@ void cargarTablero(Pieza * blancas[], Pieza * negras[]){
 	negras[1]->codigo = DAMAN;
 
 	blancas[0]->inicial = 'R';
-	negras[0]->inicial = 'R';
+	negras[0]->inicial = 'r';
 	blancas[1]->inicial = 'D';
-	negras[1]->inicial = 'D';
+	negras[1]->inicial = 'd';
 
 	blancas[0]->columna = cE;
 	blancas[0]->fila = 1;
@@ -207,13 +212,13 @@ void cargarTablero(Pieza * blancas[], Pieza * negras[]){
 		negras[3*i+4]->codigo = ALFILN;
 
 		blancas[3*i+2]->inicial = 'T';
-		negras[3*i+2]->inicial = 'T';
+		negras[3*i+2]->inicial = 't';
 
 		blancas[3*i+3]->inicial = 'C';
-		negras[3*i+3]->inicial = 'C';
+		negras[3*i+3]->inicial = 'c';
 
 		blancas[3*i+4]->inicial = 'A';
-		negras[3*i+4]->inicial = 'A';
+		negras[3*i+4]->inicial = 'a';
 
 		blancas[3*i+2]->columna = 7*i+1;
 		negras[3*i+2]->columna = 7*i+1;
@@ -245,7 +250,7 @@ void cargarTablero(Pieza * blancas[], Pieza * negras[]){
 		blancas[i+8]->codigo = PEONB;
 		negras[i+8]->codigo = PEONN;
 		blancas[i+8]->inicial = 'P';
-		negras[i+8]->inicial = 'P';
+		negras[i+8]->inicial = 'p';
 		blancas[i+8]->columna = i+1;
 		blancas[i+8]->fila = 2;
 		negras[i+8]->columna = i+1;
@@ -257,30 +262,16 @@ void cargarTablero(Pieza * blancas[], Pieza * negras[]){
 	}
 }
 
-void imprimirTablero(Pieza *blancas[], Pieza *negras[], bool turno)
+void imprimirTablero(char * tablero[], bool turno)
 {
-	int i,j,k;
-	bool encontrado = false;
+	int i,j;
 	if ((turno)){
 		puts(" \t  -------Turno --> BLANCAS---------\n");
-		for (i = 8 ; i >= 1; i--){
+		for (i = 7 ; i >= 0; i--){
 			puts("\t  ---------------------------------");
-			printf(" \t%d | ", i);
-			for(j = 1 ; j <= 8 ; j++){
-				for(k = 0; k < 16; k++){
-					if (blancas[k]->columna == j && blancas[k]->fila == i){
-						encontrado = 1;
-						printf("%s | ", blancas[k]->codigo);
-						break;
-					}
-					if (negras[k]->columna == j && negras[k]->fila == i){
-						encontrado = 1;
-						printf("%s | ", negras[k]->codigo);
-						break;
-					}
-					encontrado = 0;
-				}
-				if (!encontrado) printf("  | ");
+			printf(" \t%d | ", i+1);
+			for(j = 0 ; j < 8 ; j++){
+				printf("%c | ", tablero[i][j]);
 			}
 			puts("");
 		}
@@ -289,25 +280,11 @@ void imprimirTablero(Pieza *blancas[], Pieza *negras[], bool turno)
 	}
 	else{
 		puts(" \t  -------Turno --> NEGRAS----------\n");
-		for (i = 1 ; i <= 8 ; i++){
+		for (i = 0 ; i < 8 ; i++){
 			puts("\t  ---------------------------------");
-			printf(" \t%d | ", i);
-			for(j = 8 ; j >= 1 ; j--){
-				for(k = 0; k < 16; k++){
-					if (blancas[k]->columna == j && blancas[k]->fila == i){
-						encontrado = 1;
-						printf("%s | ", blancas[k]->codigo);
-						break;
-					}
-					if (negras[k]->columna == j && negras[k]->fila == i){
-						encontrado = 1;
-						printf("%s | ", negras[k]->codigo);
-						break;
-					}
-					encontrado = 0;
-				}
-				if (!encontrado) printf("  | ");
-
+			printf(" \t%d | ", i+1);
+			for(j = 7 ; j >= 0 ; j--){
+				printf("%c | ", tablero[i][j]);
 			}
 			puts("");
 		}
@@ -327,11 +304,11 @@ int avancePBlancas(int fil,int col, Pieza * blancas[]){
 			if (fdif < 1 || fdif > 2){
 				return E_COORD;
 			}
-			if(fil == blancas[i]->fila+2 && blancas[i]->movida==false){
+			if(fdif == 2 && blancas[i]->movida==false){
 				return i;
 				break;
 			}
-			if (fil == blancas[i]->fila+1){
+			if (fdif == 1){
 				return i;
 				break;
 			}
@@ -347,15 +324,16 @@ int avancePNegras(int fil, int col, Pieza * negras[]){
 
 	for (i=8 ; i < 16 ; i++){
 		if(negras[i]->columna == col){
-			fdif = fil - negras[i]->fila;
+			fdif = negras[i]->fila -fil; 
+
 			if (fdif < 1 || fdif > 2){
 				return E_COORD;
 			}
-			if(fil == negras[i]->fila-2 && negras[i]->movida==false){
+			if(fdif == 2 && negras[i]->movida==false){
 				return i;
 				break;
 			}
-			if (fil == negras[i]->fila-1){
+			if (fdif == 1){
 				return i;
 				break;
 			}
@@ -373,7 +351,7 @@ int enroqueC(Pieza * piezas[]){
 	return 0;
 }
 
-int movP(char pieza, int fil, int col, Pieza * piezas[]){
+int movimientoPieza(char pieza, int fil, int col, Pieza * piezas[]){
 
 	int i;
 	int cdif, fdif;
@@ -385,9 +363,10 @@ int movP(char pieza, int fil, int col, Pieza * piezas[]){
 				cdif = piezas[3*i+4]->columna - col;
 				fdif = piezas[3*i+4]->fila - fil;
 				if(cdif == fdif || cdif == fdif*(-1)){
+					if(cdif = 0) return E_COORD;
 					piezas[3*i+4]->fila = fil;
 					piezas[3*i+4]->columna = col;
-					return 0;
+					return (3*i+4);
 				}
 			}
 		}
@@ -404,7 +383,7 @@ int movP(char pieza, int fil, int col, Pieza * piezas[]){
 				{
 					piezas[3*i+3]->fila = fil;
 					piezas[3*i+3]->columna = col;
-					return 0;
+					return (3*i+3);
 				}
 			}
 		}
@@ -418,7 +397,7 @@ int movP(char pieza, int fil, int col, Pieza * piezas[]){
 					piezas[3*i+2]->fila = fil;
 					piezas[3*i+2]->columna = col;
 					if(!piezas[3*i+2]->movida) piezas[0]->movida = true;
-					return 0;
+					return (3*i+2);
 				}
 			}
 		}
@@ -428,14 +407,14 @@ int movP(char pieza, int fil, int col, Pieza * piezas[]){
 		if ((piezas[1]->fila == fil)^piezas[1]->columna == col){
 			piezas[1]->fila = fil;
 			piezas[1]->columna = col;
-			return 0;
+			return 1;
 		}
 		cdif = piezas[1]->columna - col;
 		fdif = piezas[1]->fila - fil;
 		if(cdif == fdif || cdif == fdif*(-1)){
 			piezas[1]->fila = fil;
 			piezas[1]->columna = col;
-			return 0;
+			return 1;
 		}
 		return -2;
 		break;
@@ -450,33 +429,81 @@ int movP(char pieza, int fil, int col, Pieza * piezas[]){
 			return 0;
 		}
 		if(!piezas[0]->movida) piezas[0]->movida = true;
-		return -2;
+		return E_ILEGAL;
 		break;
 	default:
-		return -1;
+		return E_COORD;
 		break;
 	}
-	return -2;
+	return E_COORD;
 }
 
-int * comprobarCamino(int fil, int col, Pieza * movida, Pieza * blancas[], Pieza * negras[]){
+int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool turno){
 
-	int i;
-	int * coord = malloc(sizeof(int)*2);
+	int i, j, fdif, cdif;
+
+	fdif = fil - movida->fila;
+	cdif = col - movida->columna;
+
 	switch(movida->inicial){
 		case 'P':
-			for(i = 0 ; i < 16 ; i ++){
-				if ((blancas[i]->fila == fil) && (blancas[i]->columna == col)){
-					return NULL;
+			if(turno){
+				if (!movida->movida && tablero[movida->fila-1+2][movida->columna-1] != CASILLAVACIA){
+					return E_ILEGAL;
 				}
-				if ((negras[i]->fila == fil) && (negras[i]->columna == col)){
-					return NULL;
+				if (tablero[movida->fila-1+1][movida->columna-1] != CASILLAVACIA){
+					return E_ILEGAL;
 				}
 			}
-			coord[0] = fil; coord[1] = col;
-			return coord;
+			else{
+				if (!movida->movida && tablero[movida->fila-1-2][movida->columna-1] != CASILLAVACIA){
+					return E_ILEGAL;
+				}
+				if (tablero[movida->fila-1-1][movida->columna-1] != CASILLAVACIA){
+					return E_ILEGAL;
+				}
+			}
+			
+			return 0;
 		break;
 		case 'A':
+			if (fdif > 0 && cdif > 0){
+				for(i = movida->fila-1 +1; i <= fil-1; i++){
+					for(j = movida->columna-1 +1; j <= col -1 ; j++){
+						if (tablero[i][j] != CASILLAVACIA){
+							return E_ILEGAL;
+						}
+					}
+				}
+			}
+			else if (fdif < 0 && cdif > 0){
+				for(i = movida->fila-1 +1; i >= fil-1; i--){
+					for(j = movida->columna-1 +1; j <= col-1; j++){
+						if (tablero[i][j] != CASILLAVACIA){
+							return E_ILEGAL;
+						}
+					}
+				}
+			}
+			else if (fdif > 0 && cdif < 0){
+				for(i = movida->fila-1 +1; i <= fil-1; i++){
+					for(j = movida->columna-1 +1; j >= col-1 ; j--){
+						if (tablero[i][j] != CASILLAVACIA){
+							return E_ILEGAL;
+						}
+					}
+				}
+			}
+			else{
+				for(i = movida->fila-1 +1; i >= fil-1; i--){
+					for(j = movida->columna-1 +1; j >= col-1; j--){
+						if (tablero[i][j] != CASILLAVACIA){
+							return E_ILEGAL;
+						}
+					}
+				}
+			}
+			return 0;
 		break;
 		case 'C':
 		break;
@@ -488,4 +515,12 @@ int * comprobarCamino(int fil, int col, Pieza * movida, Pieza * blancas[], Pieza
 		break;
 	}
 
+}
+
+void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida){
+	tablero[movida->fila-1][movida->columna-1] = CASILLAVACIA;
+	movida->fila = fil;
+	movida->columna = col;
+	tablero[movida->fila-1][movida->columna-1] = movida->inicial;
+	movida->movida = true;
 }
