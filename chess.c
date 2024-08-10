@@ -174,10 +174,6 @@ int main(int argc, char *argv) {
 				if(turno) index = movimientoPieza(buffer[0], fil, col,blancas);
 				else index = movimientoPieza(buffer[0], fil, col,negras);
 			break;
-			case 5: //ENROQ LARGO, CAPTURAS COMPLEJAS,
-			break;
-			case 6: 
-			break;//CAPTURAS COMPLEJAS DOBLES 
 		}
 		if(index>=0){
 			if(turno){
@@ -742,4 +738,69 @@ void confirmarMovimiento(int fil, int col, char * tablero[], Pieza * movida){
 	movida->columna = col;
 	tablero[movida->fila-1][movida->columna-1] = movida->inicial;
 	movida->movida = true;
+}
+
+
+void obtenerMovimiento (char p, char * casillaI, char * casillaF){
+
+	int salir = 0;
+	char sino;
+	int col, fil;
+	while (sino != 'S'){
+		while(!salir){
+			printf("Pieza a mover:\n    P) Peon\n    C) Caballo\n    A) Alfil\n    T) Torre\n    D) Dama\n    R) Rey\n");
+			scanf("%c", &p);
+			toupper(p);
+			salir = 1;
+			if (p != 'P' && p != 'C' &&  p != 'A' &&  p!= 'T' && p != 'D' && p != 'R'){
+				puts("Error seleccionando pieza");
+				salir = 0;
+			}
+		}
+		while (!salir){
+			printf("¿En qué casilla está?");
+			scanf("%s", casillaI);
+			salir = 1;
+			col = (int) casillaI[0] - 96;
+			if(col < 1 || col > 8){
+				puts("Error coordenada");
+				salir = 0;
+			}
+			fil = casillaI[1] - '0';
+			if(fil < 1 || fil > 8){
+				puts("Error coordenada");
+				salir = 0;
+			}
+		}
+
+		printf("¿Quieres mover la pieza que está en %s (%c)?\n", casillaI, p);
+		printf("Sí (S):\nNo (N)\n\n");
+		scanf("%c", sino);
+		toupper(sino);
+		puts("");
+	}
+	sino = 'N';
+	salir = 1;
+	while (sino != 'S'){
+		while (!salir){
+			printf("¿A dónde quieres mover la pieza?");
+			scanf("%s", casillaF);
+			salir = 1;
+			col = (int) casillaF[0] - 96;
+			if(col < 1 || col > 8){
+				puts("Error coordenada");
+				salir = 0;
+			}
+			fil = casillaF[1] - '0';
+			if(fil < 1 || fil > 8){
+				puts("Error coordenada");
+				salir = 0;
+			}
+		}
+		printf("¿Quieres mover la pieza que está en %s (%c) a %s?\n", casillaI, p, casillaF);
+		printf("Sí (S):\nNo (N)\nVolver a escoger pieza(V)\n\n");
+		scanf("%c", sino);
+		toupper(sino);
+		puts("");
+	}
 }
