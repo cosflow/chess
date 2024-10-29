@@ -723,7 +723,6 @@ int comprobarCamino(int fil, int col, Pieza * movida, char * tablero[], bool tur
 			else return 0;
 		break;
 	}
-
 }
 
 int zamparPieza(int fil, int col, char * tablero[], Pieza * comilona){

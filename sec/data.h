@@ -4,6 +4,7 @@
 
 struct Pieza {
 	int color;
+	char inicial;
 	char* codigo;
 	int M;
 	int x;
