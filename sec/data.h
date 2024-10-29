@@ -1,14 +1,13 @@
-// carga.h
+// data.h
 #ifndef CARGA_H
 #define CARGA_H
 struct Pieza {
-	char inicial;
-	bool color;
+	int color;
 	char* codigo;
-	int fila;
-	char columna;
-	bool M;
-	bool movida;
+	int M;
+	int x;
+	int y;
+	int movida;
 };
 typedef struct Pieza Pieza;
 #define REYB "\xE2\x99\x9A"
@@ -28,7 +27,5 @@ typedef struct Pieza Pieza;
 #define E_ILEGAL -222
 #define E_COORD -111
 #define CASILLAVACIA ' '
-
-void cargar(Pieza ** tablero);
 
 #endif
