@@ -4,5 +4,5 @@
 #include "data.h"
 void bienvenida();
 void imprimirTablero(Pieza * blancas[], Pieza * negras[], int turno);
-int recibirCoord(int * fil, int * col);
+void recibirCoord(int * fil, int * col);
 #endif

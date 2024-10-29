@@ -5,7 +5,7 @@
 #include "io.h"
 #include "utils.h"
 
-int main(int argc, char *argv) {
+int main(int argc, char ** argv) {
 
 	int i;
 	int turno = 1;
@@ -21,18 +21,18 @@ int main(int argc, char *argv) {
 	cargar(blancas, negras);
 	bienvenida();
 	imprimirTablero(blancas,negras,turno);
+	
+	int fil = 0, col = 0;
+	int m;
 
-	while(1){
-		int * fil = 0, * col = 0;
-
-		do{
-			puts("Introduce la coordenadas de la pieza que quieras mover:");
-			recibirCoord(fil,col);
-		} while (!comprobarCasilla(*fil, *col,blancas, negras));
+	do{
+		puts("Introduce la coordenadas de la pieza que quieras mover:");
+		recibirCoord(&fil, &col);
+		m = comprobarCasilla(fil, col, blancas, negras);
+	} while (m == 0);
 		
-		puts("Introduce las coordenadas donde quieras colocar la pieza:");
-		recibirCoord(fil, col);
-	}
+	puts("Introduce las coordenadas donde quieras colocar la pieza:");
+	recibirCoord(&fil, &col);
 
 	for(i = 0; i < 16 ; i++){
 		free(blancas[i]);

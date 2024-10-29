@@ -1,7 +1,7 @@
 # Variables
 CC = gcc
 CFLAGS = -Wall -g
-SRC = chess2.c carga.c io.c
+SRC = chess2.c carga.c utils.c io.c
 OBJ = $(SRC:.c=.o)
 TARGET = chess_program
 
@@ -14,7 +14,7 @@ $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f *.o *.exe
 
 .PHONY: all clean
 
