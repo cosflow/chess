@@ -1,4 +1,5 @@
 #include "data.h"
+#include "io.h"
 #include <stdio.h>
 
 void imprimirTablero(Pieza * blancas[], Pieza * negras[], int turno)

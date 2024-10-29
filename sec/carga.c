@@ -1,4 +1,5 @@
 #include "carga.h"
+#include "data.h"
 #include <stdio.h>
 
 void cargar(Pieza * blancas[], Pieza * negras[]){

@@ -1,6 +1,7 @@
 // data.h
-#ifndef CARGA_H
-#define CARGA_H
+#ifndef DATA_H
+#define DATA_H
+
 struct Pieza {
 	int color;
 	char* codigo;
