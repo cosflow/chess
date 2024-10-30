@@ -34,6 +34,10 @@ int main(int argc, char ** argv) {
 	puts("Introduce las coordenadas donde quieras colocar la pieza:");
 	recibirCoord(&fil, &col);
 
+	if(legal(fil, col, blancas[m]) == -1) return -1;
+
+	if(comprobarCamino(fil, col, blancas[m], blancas, negras) == -1) return -1;
+
 	for(i = 0; i < 16 ; i++){
 		free(blancas[i]);
 		free(negras[i]);

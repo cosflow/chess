@@ -1,5 +1,6 @@
 #include "io.h"
 #include <stdio.h>
+#include <ctype.h>
 
 void bienvenida(){
 	puts("-----------------------------------------------------");
@@ -9,30 +10,30 @@ void bienvenida(){
 void recibirCoord(int * fil, int * col)
 {
 	int salir = 0;
-	int f,c;
-	puts("-----------------------------------------------------\n\n");
+	int fila;
+	char columna;
+	puts("-----------------------------------------------------");
 	while(salir==0){
-		printf("Primero la fila -> ");
-		scanf("%d", &f);
-		puts("");
-		while (f < 1 || f > 8)		{
-			printf("Números válidos, del 1 al 8 -> ");
-			scanf("%d", &f);
-			puts("");
+		printf("Primero la columna -> ");
+		scanf(" %c", &columna);
+		columna = toupper(columna);
+		while (columna < 'A' || columna > 'H') {
+			printf("Letras válidas, de la A a la H -> ");
+			scanf(" %c", &columna);
+			columna = toupper(columna);
 		}
-		printf("Ahora, la columna -> ");
-		scanf("%d", &c);
-		while (c < 1 || c > 8){
+		printf("Ahora, la fila -> ");
+		scanf("%d", &fila);
+		while (fila < 1 || fila > 8)		{
 			printf("Números válidos, del 1 al 8 -> ");
-			scanf("%d", &c);
-			puts("");
+			scanf("%d", &fila);
 		}
-		printf("Las coordenadas introducidas son: %d, %d. ¿Estás conforme (1) o quieres repetir(0)?\n", f, c);
-		puts("-----------------------------------------------------\n\n");
+		printf("Las coordenadas introducidas son: %c%d. ¿Estás conforme (1) o quieres repetir(0)?\n", columna, fila);
 		scanf("%d", &salir);
+		puts("-----------------------------------------------------");
 	}
-	*fil= f-1;
-	*col= c-1;
+	*fil= fila-1;
+	*col= columna-'A';
 }
 
 void imprimirTablero(Pieza * blancas[], Pieza * negras[], int turno)
