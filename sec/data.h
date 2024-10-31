@@ -7,8 +7,8 @@ struct Pieza {
 	char inicial;
 	char* codigo;
 	int M;
-	int x;
-	int y;
+	int f;
+	int c;
 	int movida;
 };
 typedef struct Pieza Pieza;

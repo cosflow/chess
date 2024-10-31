@@ -3,6 +3,6 @@
 #define IO_H
 #include "data.h"
 void bienvenida();
-void imprimirTablero(Pieza * blancas[], Pieza * negras[], int turno);
+void imprimirTablero(Pieza * piezas[], int turno);
 void recibirCoord(int * fil, int * col);
 #endif

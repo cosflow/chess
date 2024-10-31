@@ -3,5 +3,5 @@
 #define CARGA_H
 #include "data.h"
 
-void cargar(Pieza * blancas[], Pieza * negras[]);
+void cargar(Pieza * piezas[]);
 #endif

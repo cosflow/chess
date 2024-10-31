@@ -32,11 +32,11 @@ void recibirCoord(int * fil, int * col)
 		scanf("%d", &salir);
 		puts("-----------------------------------------------------");
 	}
-	*fil= fila-1;
-	*col= columna-'A';
+	*fil= fila;
+	*col= columna-'A'+1;
 }
 
-void imprimirTablero(Pieza * blancas[], Pieza * negras[], int turno)
+void imprimirTablero(Pieza * piezas[], int turno)
 {
 	int i,j;
     char * tablero[8][8];
@@ -46,9 +46,8 @@ void imprimirTablero(Pieza * blancas[], Pieza * negras[], int turno)
         }
     }
 
-    for (i = 0; i < 16; i++){
-        tablero[blancas[i]->x-1][blancas[i]->y-1] = blancas[i]->codigo;
-        tablero[negras[i]->x-1][negras[i]->y-1] = negras[i]->codigo;
+    for (i = 0; i < 32; i++){
+        tablero[piezas[i]->f-1][piezas[i]->c-1] = piezas[i]->codigo;
     }
 
 	if ((turno)){

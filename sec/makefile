@@ -1,7 +1,7 @@
 # Variables
 CC = gcc
 CFLAGS = -Wall -g
-SRC = chess2.c carga.c utils.c io.c
+SRC = chess2.c carga.c utils.c io.c dyn.c
 OBJ = $(SRC:.c=.o)
 TARGET = chess_program
 

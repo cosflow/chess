@@ -1,67 +1,68 @@
 #include "carga.h"
-#include <stdio.h>
+#include <stdlib.h>
 
-void cargar(Pieza * blancas[], Pieza * negras[]){
-    
+void cargar(Pieza * piezas[]){
 	int i;
+	
+	piezas[0]->codigo = REYB;
+	piezas[16]->codigo = REYN;
+	piezas[1]->codigo = DAMAB;
+	piezas[17]->codigo = DAMAN;
+	piezas[0]->inicial = 'R';
+	piezas[0+16]->inicial = 'r';
+	piezas[1]->inicial = 'D';
+	piezas[1+16]->inicial = 'd';
 
-	blancas[0]->codigo = REYB;
-	negras[0]->codigo = REYN;
-	blancas[1]->codigo = DAMAB;
-	negras[1]->codigo = DAMAN;
-
-	blancas[0]->y = 5;
-	blancas[0]->x = 1;
-	negras[0]->y = 5;
-	negras[0]->x = 8;
-
-	blancas[1]->y = 4;
-	negras[1]->y = 4;
-	blancas[1]->x = 1;
-	negras[1]->x = 8;
-
+	piezas[0]->c = 5;
+	piezas[0]->f = 1;
+	piezas[16]->c = 5;
+	piezas[16]->f = 8;
+	piezas[1]->c = 4;
+	piezas[17]->c = 4;
+	piezas[1]->f = 1;
+	piezas[17]->f = 8;
 
 	for(i = 0 ; i < 2 ; i++){
-		blancas[3*i+2]->codigo = TORREB;
-		negras[3*i+2]->codigo = TORREN;
-		blancas[3*i+3]->codigo = CABALLOB;
-		negras[3*i+3]->codigo = CABALLON;
-		blancas[3*i+4]->codigo = ALFILB;
-		negras[3*i+4]->codigo = ALFILN;
-		blancas[3*i+2]->inicial = 'T';
-		negras[3*i+2]->inicial = 't';
-		blancas[3*i+3]->inicial = 'C';
-		negras[3*i+3]->inicial = 'c';
-		blancas[3*i+4]->inicial = 'A';
-		negras[3*i+4]->inicial = 'a';
-		blancas[3*i+2]->y = 7*i+1;
-		negras[3*i+2]->y = 7*i+1;
-		blancas[3*i+2]->x = 1;
-		negras[3*i+2]->x = 8;
-		blancas[3*i+3]->y = i*5+2;
-		negras[3*i+3]->y = i*5+2;
-		blancas[3*i+3]->x = 1;
-		negras[3*i+3]->x = 8;
-		blancas[3*i+4]->y = 3 + 3*i;
-		negras[3*i+4]->y = 3 + 3*i;
-		blancas[3*i+4]->x = 1;
-		negras[3*i+4]->x = 8;
+		piezas[3*i+2]->codigo = TORREB;
+		piezas[3*i+2+16]->codigo = TORREN;
+		piezas[3*i+3]->codigo = CABALLOB;
+		piezas[3*i+3+16]->codigo = CABALLON;
+		piezas[3*i+4]->codigo = ALFILB;
+		piezas[3*i+4+16]->codigo = ALFILN;
+		piezas[3*i+2]->inicial = 'T';
+		piezas[3*i+2+16]->inicial = 't';
+		piezas[3*i+3]->inicial = 'C';
+		piezas[3*i+3+16]->inicial = 'c';
+		piezas[3*i+4]->inicial = 'A';
+		piezas[3*i+4+16]->inicial = 'a';
+		piezas[3*i+2]->c = 7*i+1;
+		piezas[3*i+2+16]->c = 7*i+1;
+		piezas[3*i+2]->f = 1;
+		piezas[3*i+2+16]->f = 8;
+		piezas[3*i+3]->c = i*5+2;
+		piezas[3*i+3+16]->c = i*5+2;
+		piezas[3*i+3]->f = 1;
+		piezas[3*i+3+16]->f = 8;
+		piezas[3*i+4]->c = 3 + 3*i;
+		piezas[3*i+4+16]->c = 3 + 3*i;
+		piezas[3*i+4]->f = 1;
+		piezas[3*i+4+16]->f = 8;
 	}
 
 	for(i = 0 ; i < 8 ; i++){
-		blancas[i+8]->codigo = PEONB;
-		negras[i+8]->codigo = PEONN;
-		blancas[i+8]->y = i+1;
-		blancas[i+8]->x = 2;
-		negras[i+8]->y = i+1;
-		negras[i+8]->x = 7;
+		piezas[i+8]->codigo = PEONB;
+		piezas[i+8+16]->codigo = PEONN;
+		piezas[i+8]->inicial = 'P';
+		piezas[i+8+16]->inicial = 'p';
+		piezas[i+8]->c = i+1;
+		piezas[i+8]->f = 2;
+		piezas[i+8+16]->c = i+1;
+		piezas[i+8+16]->f = 7;
     }
-    for (i = 0; i < 16 ; i++){
-		blancas[i]->M = 0;
-		blancas[i]->movida = 0;
-        blancas[i]->color = 1;
-		negras[i]->M = 0;
-		negras[i]->movida = 0;
-        negras[i]->color = 0;  
+    for (i = 0; i < 32 ; i++){
+		piezas[i]->M = 0;
+		piezas[i]->movida = 0;
+        if(i<16) piezas[i]->color = 1;
+		else piezas[i]->color = 0;
     }
 }
