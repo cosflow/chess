@@ -20,13 +20,18 @@ int comprobarCasilla(int x, int y, Pieza * piezas[]){
     return -1;
 }
 
-int legal(int ydes, int xdes, Pieza * p){
+int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
     int fdif = ydes - p->f;
 	int cdif = xdes - p->c;
     switch(toupper(p->inicial)){
         case 'P':
             if(fdif == 0) return -1;
-            if(cdif != 0) return -1;
+            if(cdif != 0) {
+                if(abs(cdif) == 1){
+                    if(comprobarCasilla(xdes, ydes, piezas) == -1) return -1;
+                }
+                else return -1;
+            }
             if(p->color && fdif < 1) return -1;
             if(!p->color && fdif > -1) return -1;
             if(!p->movida){
@@ -58,7 +63,7 @@ int legal(int ydes, int xdes, Pieza * p){
 }
 
 int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
-    int i;
+    int i, m;
     int fdif = ydes - p->f;
 	int cdif = xdes - p->c;
     if(fdif == 0 && cdif == 0) return -1;
@@ -66,13 +71,33 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
         case 'P':
             switch(p->color){
                 case 1:
-                for(i = 1; i <= fdif; i++){
-                    if (comprobarCasilla(p->c, p->f+i, piezas) != -1) return -1;
+                if (abs(fdif) == abs(cdif) && abs(fdif == 1)){
+                    m = comprobarCasilla(xdes, ydes, piezas);
+                    if (m != -1) {
+                        if(piezas[m]->color==p->color) return -1;
+                        else piezas[m]->M = 1;
+                    }
+                    //falta codear AL PASO
+                }
+                else{
+                    for(i = 1; i <= fdif; i++){
+                        if (comprobarCasilla(p->c, p->f+i, piezas) != -1) return -1;
+                    }
                 }
                 break;
                 case 0:
-                for(i = 1; i <= abs(fdif); i++){
-                    if (comprobarCasilla(p->c, p->f-i, piezas) != -1) return -1;
+                if (abs(fdif) == abs(cdif) && abs(fdif == 1)){
+                    m = comprobarCasilla(xdes, ydes, piezas);
+                    if (m != -1) {
+                        if(piezas[m]->color==p->color) return -1;
+                        else piezas[m]->M = 1;
+                    }
+                    //falta codear AL PASO
+                }
+                else{
+                    for(i = 1; i <= abs(fdif); i++){
+                        if (comprobarCasilla(p->c, p->f-i, piezas) != -1) return -1;
+                    }
                 }
                 break;
             }
@@ -82,23 +107,49 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             int vx = cdif / abs(cdif);
             int vy = fdif / abs(fdif);
             for (i = 1; i <= diag; i++){
-                if (comprobarCasilla(p->c+i*vx, p->f+i*vy, piezas) != -1) return -1;
+                m = comprobarCasilla(p->c+i*vx, p->f+i*vy, piezas);
+                if (m != -1) {
+                    if(i != diag) return -1;
+                    else {
+                        printf("%d se come a %d", piezas[m]-> color, p->color);
+                        if(piezas[m]->color==p->color) return -1;
+                        else piezas[m]->M = 1;
+                    }
+                }
             }
         break;
         case 'C':
-            if (comprobarCasilla(xdes, ydes, piezas) != -1) return -1;
+            m = comprobarCasilla(xdes, ydes, piezas);
+            if (m != -1) {
+                if (piezas[m]->color == p->color) return -1;   
+                else piezas[m]->M = 1;
+            }
         break;
         case 'T':
             if(fdif != 0){
                 int vy = fdif / abs(fdif);
                 for (i = 1; i <= abs(fdif); i++){
-                    if (comprobarCasilla(p->c, p->f+i*vy, piezas) != -1) return -1;
+                    m = comprobarCasilla(p->c, p->f+i*vy, piezas);
+                    if (m != -1) {
+                        if (i != abs(fdif)) return -1;
+                        else {
+                            if(piezas[m]->color==p->color) return -1;
+                            else piezas[m]->M = 1;
+                        }
+                    }
                 }
             }
             else{
                 int vx = cdif / abs(cdif);
                 for (i = 1; i <= abs(cdif); i++){
-                    if (comprobarCasilla(p->c+i*vx, p->f, piezas) != -1) return -1;
+                    m = comprobarCasilla(p->c+i*vx, p->f, piezas);
+                    if (m != -1) {
+                        if (i != abs(cdif)) return -1;
+                        else {
+                            if(piezas[m]->color==p->color) return -1;
+                            else piezas[m]->M = 1;
+                        }
+                    }
                 }
             }
         break;
@@ -106,13 +157,27 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             if(fdif != 0 && cdif == 0){
                 int vy = fdif / abs(fdif);
                 for (i = 1; i <= abs(fdif); i++){
-                    if (comprobarCasilla(p->c, p->f+i*vy, piezas) != -1) return -1;
+                    m = comprobarCasilla(p->c, p->f+i*vy, piezas);
+                    if (m != -1) {
+                        if (i != abs(fdif)) return -1;
+                        else {
+                            if(piezas[m]->color==p->color) return -1;
+                            else piezas[m]->M = 1;
+                        }
+                    }
                 }
             }
             else if (cdif != 0 && fdif== 0) {
                 int vx = cdif / abs(cdif);
                 for (i = 1; i <= abs(cdif); i++){
-                    if (comprobarCasilla(p->c+i*vx, p->f, piezas) != -1) return -1;
+                    m = comprobarCasilla(p->c+i*vx, p->f, piezas);
+                    if (m != -1) {
+                        if (i != abs(cdif)) return -1;
+                        else {
+                            if(piezas[m]->color==p->color) return -1;
+                            else piezas[m]->M = 1;
+                        }
+                    }
                 }
             }
             else if (abs(cdif) == abs(fdif)){
@@ -120,7 +185,14 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 int vx = cdif / abs(cdif);
                 int vy = fdif / abs(fdif);
                 for (i = 1; i <= diag; i++){
-                    if (comprobarCasilla(p->c+i*vx, p->f+i*vy, piezas) != -1) return -1;
+                    m = comprobarCasilla(p->c+i*vx, p->f+i*vy, piezas);
+                    if (m != -1) {
+                        if(i != diag) return -1;
+                        else {
+                            if(piezas[m]->color==p->color) return -1;
+                            else piezas[m]->M = 1;
+                        }
+                    }
                 }
             }
         break;

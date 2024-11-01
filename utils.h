@@ -5,7 +5,7 @@
 
 int cambiarTurno(int turno);
 int comprobarCasilla(int x, int y, Pieza * piezas[]);
-int legal(int xdes, int ydes, Pieza * p);
+int legal(int xdes, int ydes, Pieza * p, Pieza * piezas []);
 int comprobarCamino(int xdes, int ydes, Pieza * p, Pieza * piezas[]);
 
 #endif

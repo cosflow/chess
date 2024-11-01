@@ -51,7 +51,7 @@ int main(int argc, char ** argv) {
 			}
 			recibirCoord(&fil, &col);
 			// printf("%d %d", fil, col);
-			if(legal(fil, col, piezas [m]) != -1){
+			if(legal(fil, col, piezas [m], piezas) != -1){
 				if(comprobarCamino(fil, col, piezas[m], piezas) == 0) salir = 1;
 				else printf("Camino bloquiado.\n");
 			}
