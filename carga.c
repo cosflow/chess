@@ -64,5 +64,11 @@ void cargar(Pieza * piezas[]){
 		piezas[i]->movida = 0;
         if(i<16) piezas[i]->color = 1;
 		else piezas[i]->color = 0;
+		if (i > 0){
+			piezas[i]->ant = piezas[i-1];
+		}
+		if(i<31){
+			piezas[i]->sig = piezas[i+1];
+		}
     }
 }

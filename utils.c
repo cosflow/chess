@@ -16,7 +16,6 @@ int comprobarCasilla(int x, int y, Pieza * piezas[]){
             if(piezas[i]->c == x && piezas[i]->f == y) return i;
         }
     }
-    printf("%d", i);
     return -1;
 }
 
@@ -32,12 +31,11 @@ int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 }
                 else return -1;
             }
-            if(p->color && fdif < 1) return -1;
-            if(!p->color && fdif > -1) return -1;
+            if(abs(fdif) < 1) return -1;
             if(!p->movida){
                 if(abs(fdif) != 1 && abs(fdif) != 2) return -1;
             }
-            if(p->movida && fdif != 1) return -1;
+            if(p->movida && abs(fdif) != 1) return -1;
         break;
         case 'A':
             if(abs(fdif) != abs(cdif)) return -1;
@@ -74,8 +72,13 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 if (abs(fdif) == abs(cdif) && abs(fdif == 1)){
                     m = comprobarCasilla(xdes, ydes, piezas);
                     if (m != -1) {
-                        if(piezas[m]->color==p->color) return -1;
-                        else piezas[m]->M = 1;
+                        if(piezas[m]->color==p->color) {
+                            printf("coño...\n");    
+                            if(!piezas[m]->M) printf("HJIO DE PUTA");
+                            
+                        }
+                        else{ piezas[m]->M = 1; printf("MUERTA");}
+                        
                     }
                     //falta codear AL PASO
                 }
@@ -89,7 +92,7 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 if (abs(fdif) == abs(cdif) && abs(fdif == 1)){
                     m = comprobarCasilla(xdes, ydes, piezas);
                     if (m != -1) {
-                        if(piezas[m]->color==p->color) return -1;
+                        if(piezas[m]->color==p->color && !piezas[m]->M) return -1;
                         else piezas[m]->M = 1;
                     }
                     //falta codear AL PASO
@@ -112,7 +115,7 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if(i != diag) return -1;
                     else {
                         printf("%d se come a %d", piezas[m]-> color, p->color);
-                        if(piezas[m]->color==p->color) return -1;
+                        if(piezas[m]->color==p->color && piezas[m]->M == 0) return -1;
                         else piezas[m]->M = 1;
                     }
                 }
@@ -121,7 +124,10 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
         case 'C':
             m = comprobarCasilla(xdes, ydes, piezas);
             if (m != -1) {
-                if (piezas[m]->color == p->color) return -1;   
+                if (piezas[m]->color == p->color){
+                    printf("son del mismo color");
+                    if (piezas[m]->M == 0) printf ("está vivA");   
+                }
                 else piezas[m]->M = 1;
             }
         break;

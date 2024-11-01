@@ -10,6 +10,8 @@ struct Pieza {
 	int f;
 	int c;
 	int movida;
+	struct Pieza * ant;
+	struct Pieza * sig;
 };
 typedef struct Pieza Pieza;
 #define REYB "\xE2\x99\x9A"
