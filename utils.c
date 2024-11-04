@@ -11,7 +11,7 @@ int cambiarTurno(int turno){
 int comprobarCasilla(int x, int y, Pieza * piezas[]){
     int i;
     for (i = 0 ; i < 32 ; i++){
-        if(!piezas[i]->M){
+        if(piezas[i]->M == 0){
             // printf("%d", i);
             if(piezas[i]->c == x && piezas[i]->f == y) return i;
         }
@@ -72,13 +72,12 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 if (abs(fdif) == abs(cdif) && abs(fdif == 1)){
                     m = comprobarCasilla(xdes, ydes, piezas);
                     if (m != -1) {
-                        if(piezas[m]->color==p->color) {
-                            printf("coño...\n");    
-                            if(!piezas[m]->M) printf("HJIO DE PUTA");
-                            
+                        if(piezas[m]->M == 0) {    
+                            if(piezas[m]->color == p->color) {
+                                puts("NOJIAEFIOAMKWF");
+                                return -1;
+                            }
                         }
-                        else{ piezas[m]->M = 1; printf("MUERTA");}
-                        
                     }
                     //falta codear AL PASO
                 }
@@ -92,8 +91,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 if (abs(fdif) == abs(cdif) && abs(fdif == 1)){
                     m = comprobarCasilla(xdes, ydes, piezas);
                     if (m != -1) {
-                        if(piezas[m]->color==p->color && !piezas[m]->M) return -1;
-                        else piezas[m]->M = 1;
+                        if(piezas[m]->M == 0) {    
+                            if(piezas[m]->color == p->color) return -1;
+                        }
                     }
                     //falta codear AL PASO
                 }
@@ -113,10 +113,8 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 m = comprobarCasilla(p->c+i*vx, p->f+i*vy, piezas);
                 if (m != -1) {
                     if(i != diag) return -1;
-                    else {
-                        printf("%d se come a %d", piezas[m]-> color, p->color);
-                        if(piezas[m]->color==p->color && piezas[m]->M == 0) return -1;
-                        else piezas[m]->M = 1;
+                    if(piezas[m]->M == 0) {    
+                        if(piezas[m]->color == p->color) return -1;
                     }
                 }
             }
@@ -124,11 +122,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
         case 'C':
             m = comprobarCasilla(xdes, ydes, piezas);
             if (m != -1) {
-                if (piezas[m]->color == p->color){
-                    printf("son del mismo color");
-                    if (piezas[m]->M == 0) printf ("está vivA");   
+                if(piezas[m]->M == 0) {    
+                    if(piezas[m]->color == p->color) return -1;
                 }
-                else piezas[m]->M = 1;
             }
         break;
         case 'T':
@@ -139,8 +135,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if (m != -1) {
                         if (i != abs(fdif)) return -1;
                         else {
-                            if(piezas[m]->color==p->color) return -1;
-                            else piezas[m]->M = 1;
+                            if(piezas[m]->M == 0) {    
+                                if(piezas[m]->color == p->color) return -1;
+                            }
                         }
                     }
                 }
@@ -152,8 +149,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if (m != -1) {
                         if (i != abs(cdif)) return -1;
                         else {
-                            if(piezas[m]->color==p->color) return -1;
-                            else piezas[m]->M = 1;
+                            if(piezas[m]->M == 0) {    
+                                if(piezas[m]->color == p->color) return -1;
+                            }
                         }
                     }
                 }
@@ -167,8 +165,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if (m != -1) {
                         if (i != abs(fdif)) return -1;
                         else {
-                            if(piezas[m]->color==p->color) return -1;
-                            else piezas[m]->M = 1;
+                            if(piezas[m]->M == 0) {    
+                                if(piezas[m]->color == p->color) return -1;
+                            }
                         }
                     }
                 }
@@ -180,8 +179,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if (m != -1) {
                         if (i != abs(cdif)) return -1;
                         else {
-                            if(piezas[m]->color==p->color) return -1;
-                            else piezas[m]->M = 1;
+                            if(piezas[m]->M == 0) {    
+                                if(piezas[m]->color == p->color) return -1;
+                            }
                         }
                     }
                 }
@@ -195,8 +195,9 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if (m != -1) {
                         if(i != diag) return -1;
                         else {
-                            if(piezas[m]->color==p->color) return -1;
-                            else piezas[m]->M = 1;
+                            if(piezas[m]->M == 0) {    
+                                if(piezas[m]->color == p->color) return -1;
+                            }
                         }
                     }
                 }

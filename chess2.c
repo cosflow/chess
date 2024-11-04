@@ -58,7 +58,7 @@ int main(int argc, char ** argv) {
 			else printf("Movimiento ilegal.\n");
 			// printf("%d %d", piezas[m]->x, piezas[m]->y);
 		} while (salir == 0);
-		mover(fil, col, piezas[m]);
+		mover(fil, col, piezas[m], piezas);
 		turno = cambiarTurno(turno);
 		imprimirTablero(piezas, turno);
 	}

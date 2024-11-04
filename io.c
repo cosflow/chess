@@ -47,6 +47,7 @@ void imprimirTablero(Pieza * piezas[], int turno)
     }
 
     for (i = 0; i < 32; i++){
+		if(piezas[i]->M) puts("inuefmkeafmk");
         if(!piezas[i]->M) tablero[piezas[i]->f-1][piezas[i]->c-1] = piezas[i]->codigo;
     }
 
