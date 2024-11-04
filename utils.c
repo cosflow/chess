@@ -54,7 +54,31 @@ int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             }
         break;
         case 'R':
-            if(cdif * fdif != 0 && abs(cdif) * abs(fdif) != 1) return -1;
+            if(abs(cdif) == 0 || abs(cdif == 1)){
+                if(fdif != 0 && abs(fdif) != 1) return -1;
+            }
+
+            else if(cdif == 2){
+                if(p->movida != 0) return -1;
+                if(fdif != 0) return -1;
+                int m = comprobarCasilla(xdes+3, ydes, piezas);
+                if (m!=-1){
+                    if (toupper(piezas[m]->inicial) != 'T') return -1;
+                    if (piezas[m]->movida) return -1;
+                }
+                else return -1;
+            }
+            else if(cdif == -2){
+                if(p->movida != 0) return -1;
+                if(fdif != 0) return -1;
+                int m = comprobarCasilla(xdes-4, ydes, piezas);
+                if (m!=-1){
+                    if (toupper(piezas[m]->inicial) != 'T') return -1;
+                    if (piezas[m]->movida) return -1;
+                }
+                else return -1;
+            }
+
         break;
     }
     return 0;
@@ -74,7 +98,6 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                     if (m != -1) {
                         if(piezas[m]->M == 0) {    
                             if(piezas[m]->color == p->color) {
-                                puts("NOJIAEFIOAMKWF");
                                 return -1;
                             }
                         }
@@ -204,7 +227,13 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             }
         break;
         case 'R':
-            if (comprobarCasilla(p->c, p->f, piezas) != -1) return -1;
+            m = comprobarCasilla(xdes, ydes, piezas);
+            
+            if (m != -1) {
+                if(piezas[m]->M == 0) {    
+                    if(piezas[m]->color == p->color) return -1;
+                }
+            }
         break;
     }
     return 0;
