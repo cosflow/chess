@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "dyn.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -61,7 +62,7 @@ int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             else if(cdif == 2){
                 if(p->movida != 0) return -1;
                 if(fdif != 0) return -1;
-                int m = comprobarCasilla(xdes+3, ydes, piezas);
+                int m = comprobarCasilla(p->c+3, ydes, piezas);
                 if (m!=-1){
                     if (toupper(piezas[m]->inicial) != 'T') return -1;
                     if (piezas[m]->movida) return -1;
@@ -71,14 +72,13 @@ int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             else if(cdif == -2){
                 if(p->movida != 0) return -1;
                 if(fdif != 0) return -1;
-                int m = comprobarCasilla(xdes-4, ydes, piezas);
+                int m = comprobarCasilla(p->c-4, ydes, piezas);
                 if (m!=-1){
                     if (toupper(piezas[m]->inicial) != 'T') return -1;
                     if (piezas[m]->movida) return -1;
                 }
                 else return -1;
             }
-
         break;
     }
     return 0;
@@ -227,12 +227,29 @@ int comprobarCamino(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             }
         break;
         case 'R':
-            m = comprobarCasilla(xdes, ydes, piezas);
-            
-            if (m != -1) {
-                if(piezas[m]->M == 0) {    
-                    if(piezas[m]->color == p->color) return -1;
+            switch(cdif){
+                case 2:
+                for (i = p->c; i < 8 ; i++){
+                    if (comprobarCasilla(p->f+i, p->c, piezas) != -1) return -1;
                 }
+                m = comprobarCasilla(p->c+3, p->f, piezas);
+                mover((p->f), (p->c+1), piezas[m], piezas);
+                break;
+                case -2:
+                for (i = p->c; i > 0 ; i--){
+                    if (comprobarCasilla(p->f+i, p->c, piezas) != -1) return -1;
+                }
+                m = comprobarCasilla(p->c-4, p->f, piezas);
+                mover((p->f), (p->c-1), piezas[m], piezas);
+                break;
+                default:
+                m = comprobarCasilla(xdes, ydes, piezas);
+                if (m != -1) {
+                    if(piezas[m]->M == 0) {    
+                        if(piezas[m]->color == p->color) return -1;
+                    }
+                }
+                break;
             }
         break;
     }
