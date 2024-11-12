@@ -37,6 +37,7 @@ int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
                 if(abs(fdif) != 1 && abs(fdif) != 2) return -1;
             }
             if(p->movida && abs(fdif) != 1) return -1;
+
         break;
         case 'A':
             if(abs(fdif) != abs(cdif)) return -1;
@@ -55,6 +56,7 @@ int legal(int ydes, int xdes, Pieza * p, Pieza * piezas[]){
             }
         break;
         case 'R':
+            if(abs(fdif) > 1 || abs(cdif) > 2) return -1;
             if(abs(cdif) == 0 || abs(cdif == 1)){
                 if(fdif != 0 && abs(fdif) != 1) return -1;
             }

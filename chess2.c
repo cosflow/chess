@@ -22,7 +22,7 @@ int main(int argc, char ** argv) {
 	imprimirTablero(piezas,turno);
 	
 	int fil = 0, col = 0, salir = 0;
-	int m;
+	int m, j;
 
 	while(1){
 		salir = 0;
@@ -52,13 +52,20 @@ int main(int argc, char ** argv) {
 			recibirCoord(&fil, &col);
 			// printf("%d %d", fil, col);
 			if(legal(fil, col, piezas [m], piezas) != -1){
-				if(comprobarCamino(fil, col, piezas[m], piezas) == 0) salir = 1;
+				if(comprobarCamino(fil, col, piezas[m], piezas) == 0){
+					j = mover(fil, col, piezas[m], piezas);
+					printf("%d\n", j);
+					if(j != 0){
+						printf("Estás en JAQUE, evítalo.");
+						printf("%c en %d %d", piezas[j]->inicial, piezas[j]->c, piezas[j]->f);
+					} else salir = 1;
+				}
 				else printf("Camino bloquiado.\n");
 			}
 			else printf("Movimiento ilegal.\n");
 			// printf("%d %d", piezas[m]->x, piezas[m]->y);
+			;
 		} while (salir == 0);
-		mover(fil, col, piezas[m], piezas);
 		turno = cambiarTurno(turno);
 		imprimirTablero(piezas, turno);
 	}

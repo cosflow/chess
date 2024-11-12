@@ -3,6 +3,7 @@
 #define DYN_H
 #include "data.h"
 
-void mover(int x, int y, Pieza * p, Pieza * piezas[]);
+int mover(int y, int x, Pieza * p, Pieza * piezas[]);
+int comprobarJaque(Pieza * rey, Pieza * piezas[]);
 
 #endif
